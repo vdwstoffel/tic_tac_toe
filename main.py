@@ -35,12 +35,21 @@ def active_player(turn):
 def user_turn():
     """Takes input from the player and checks if the spot is available to place on the board"""
     global turn
-    user_choice = int(input("Enter Option: "))
-    if row[user_choice - 1] == " ":
-        row[user_choice - 1] = row[user_choice - 1].replace(" ", player)
-    else:
+    try:
+        user_choice = int(input("Enter Option: "))
+    except ValueError:
         print("Please make a valid choice")
         turn -= 1
+    else:
+        try:
+            if row[user_choice - 1] == " ":
+                row[user_choice - 1] = row[user_choice - 1].replace(" ", player)
+            else:
+                print("Space already taken")
+                turn -= 1
+        except IndexError:
+            print("Please select a number between 1-9")
+            turn -= 1
 
 
 def check_win(player):
@@ -59,13 +68,17 @@ def check_win(player):
 
 if __name__ == "__main__":
     while True:
-        turn += 1
-        player = active_player(turn)
-        print_board()
-        user_turn()
-        if check_win(player):
+        if " " in row:
+            turn += 1
+            player = active_player(turn)
             print_board()
-            print(f"{player} wins!!!!")
+            user_turn()
+            if check_win(player):
+                print_board()
+                print(f"{player} wins!!!!")
+                break
+        else:
+            print_board()
+            print("Draw!!!")
             break
-
-
+    print("Game Over!")
